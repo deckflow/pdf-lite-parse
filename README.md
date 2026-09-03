@@ -23,9 +23,11 @@ pdf-lite-parse document.pdf --out ./out --render
 
 ## Build from source
 
-From a checkout of this repository:
+Clone the repository and build:
 
 ```bash
+git clone https://github.com/deckflow/pdf-lite-parse.git
+cd pdf-lite-parse
 npm ci
 npm run typecheck
 npm run build
