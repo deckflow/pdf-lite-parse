@@ -1,0 +1,16 @@
+pdf-lite-parse
+Copyright 2026 pdf-lite-parse contributors
+
+This project includes local parsing, probing, layout, assembly, rendering and
+schema code derived from the pdf-parse project (Deckflow), with modifications
+for an offline community distribution. Modifications include local quality
+checks, output safety, cross-page assembly and standalone npm packaging.
+
+PDF.js / pdfjs-dist
+Copyright Mozilla Foundation and contributors.
+Licensed under the Apache License, Version 2.0.
+https://github.com/mozilla/pdf.js
+
+Optional @napi-rs/canvas is distributed under its own MIT license and includes
+native components with their own notices; see the installed package's LICENSE
+and included third-party notices.

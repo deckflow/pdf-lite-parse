@@ -1,0 +1,48 @@
+{
+  "name": "pdf-lite-parse",
+  "version": "0.1.0",
+  "description": "Offline PDF to structured result.v3 and Markdown. No models, network or API keys.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "pdf-lite-parse": "dist/parser/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schemas/*": "./schemas/parser/*.json",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "schemas/parser",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22.18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "pdfjs-dist": "6.2.108"
+  },
+  "optionalDependencies": {
+    "@napi-rs/canvas": "1.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
+  }
+}
