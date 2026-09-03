@@ -1,12 +1,12 @@
 # pdf-lite-parse
 
-轻量、离线的 PDF 解析器，将数字型 PDF 转换为结构化 JSON 和 Markdown。提供 Node.js API 和命令行工具，无需模型、OCR 服务或 API Key。
+A lightweight, offline PDF parser that converts PDFs with native text into structured JSON and Markdown. Available as a Node.js API and a command-line tool. No models, OCR services, or API keys are required.
 
-支持原生文本、表格、分栏、标题、列表、图片、批注及大纲，并保留内容的来源定位。必选运行时依赖只有 `pdfjs-dist`；可选的 `@napi-rs/canvas` 用于复合图裁剪，缺失时会明确降级。
+Extract text, tables, columns, headings, lists, images, annotations, and document outlines while preserving references to the source content. The only required runtime dependency is `pdfjs-dist`. The optional `@napi-rs/canvas` dependency enables composite figure cropping; when unavailable, affected output is marked as degraded with a warning.
 
-## 从源码构建
+## Build from source
 
-需要 **Node.js ≥ 22.18** 和 npm。
+Requires **Node.js 22.18 or later** and npm.
 
 ```bash
 npm ci
@@ -15,9 +15,9 @@ npm run build
 node dist/parser/cli.js document.pdf --out ./out --render
 ```
 
-构建会生成 JavaScript、TypeScript 声明和 JSON Schema，不需要额外的数据文件或环境配置。
+The build generates JavaScript, TypeScript declarations, and JSON Schema files. No additional data files or environment configuration are needed.
 
-生成并安装本地 npm 包：
+Create a local npm package and install the CLI:
 
 ```bash
 npm pack
@@ -25,9 +25,9 @@ npm install -g ./pdf-lite-parse-0.1.0.tgz
 pdf-lite-parse document.pdf --out ./out --render
 ```
 
-当前版本为 `0.1.0`，尚未发布到 npm。只需要基础解析能力时，可使用 `npm ci --omit=optional` 安装依赖。
+For basic parsing without composite figure cropping, install dependencies with `npm ci --omit=optional`.
 
-## 命令行
+## Command-line usage
 
 ```bash
 pdf-lite-parse parse report.pdf --out out/report --render
@@ -36,55 +36,63 @@ pdf-lite-parse convert out/report/result.json -o report.md
 pdf-lite-parse check-determinism report.pdf
 ```
 
-省略子命令时默认为 `parse`。`convert` 接受 PDF 或已生成的 `result.json`，图片链接随 Markdown 输出位置调整。转换 JSON 时应保留其相邻资产目录。
+The default command is `parse`. The `convert` command accepts a PDF or an existing `result.json` and adjusts image links for the Markdown output location. When converting JSON, keep the associated `assets/` directory alongside it.
 
-| 选项 | 作用 |
+| Option | Description |
 |---|---|
-| `--out <dir>` | 工件目录，默认 `<PDF名>.parsed` |
-| `-o <file>` | `convert` 的 Markdown 输出文件 |
-| `--password <pw>` | 加密 PDF 口令，不写入输出 |
-| `--render` | 同时生成 Markdown |
-| `--page-furniture off\|drop\|extract` | 页眉页脚保留、从正文排除或单独提取，默认 `off` |
-| `--overlaid-text auto\|keep\|drop` | 图内文字合成、独立保留或移除，默认 `auto` |
-| `--debug` | 保存中间解析结果 |
-| `--include-source-path` | 在结果中包含源文件绝对路径 |
-| `--no-isolate` | 对可信输入关闭子进程隔离和资源限额 |
+| `--out <dir>` | Output directory; defaults to `<pdf-name>.parsed`. |
+| `-o <file>` | Markdown output file for `convert`. |
+| `--password <pw>` | Password for an encrypted PDF; never written to output. |
+| `--render` | Also generate Markdown. |
+| `--page-furniture off\|drop\|extract` | Keep headers and footers, remove them from body text, or extract them separately; defaults to `off`. |
+| `--overlaid-text auto\|keep\|drop` | Automatically combine text with figures, keep it separately, or drop it; defaults to `auto`. |
+| `--debug` | Save intermediate parsing results. |
+| `--include-source-path` | Include the absolute source file path in the result. |
+| `--no-isolate` | Disable child-process isolation and resource limits for trusted inputs. |
 
-默认启用页级失败隔离和资源限额。新结果通过校验后才替换已有工件；拒绝覆盖输入文件和非工件目录。
+Page-level failure isolation and resource limits are enabled by default. Existing output is replaced only after the new result passes validation. The parser refuses to overwrite the input file or directories that are not recognized as parser output.
 
-退出码：`0` 表示完成（可能有降级页）；`1` 表示页面失败、资源超限或结果校验失败；`2` 表示参数、文档打开或渲染错误。
+Exit codes: `0` indicates completion, which may include degraded pages; `1` indicates a page failure, resource limit violation, or result validation failure; `2` indicates an argument, document opening, or rendering error.
 
 ## Node.js API
 
-安装构建后的包，即可使用：
+Install the generated package into your project:
+
+```bash
+npm install /path/to/pdf-lite-parse-0.1.0.tgz
+```
+
+Then import the API using ES modules:
 
 ```ts
 import { parse, parseArtifacts, toMarkdown } from 'pdf-lite-parse';
 
-const result = await parse('report.pdf'); // 也接受 Uint8Array 或 Buffer
+const result = await parse('report.pdf'); // Also accepts Uint8Array or Buffer.
 const markdown = toMarkdown(result);
 
 const artifacts = await parseArtifacts('report.pdf', {
   pageFurniture: 'extract',
 });
-// 图片路径是逻辑相对路径，对应字节可从 assets 获取。
+// Asset keys are relative paths; values contain the image bytes.
 for (const [path, bytes] of artifacts.assets) {
-  // 将 bytes 保存到自己的输出目录。
+  // Save bytes at path within your output directory.
 }
 ```
 
-`ParseOptions` 支持 `password`、`pageFurniture`、`overlaidText`、`isolate` 和 `includeSourcePath`。`parse` 返回 `result.v3` 文档；`toMarkdown` 返回字符串，结果缺少必要字段时抛出错误。TypeScript 类型随包提供，JSON Schema 可通过 `pdf-lite-parse/schemas/result` 等子路径读取。
+`ParseOptions` supports `password`, `pageFurniture`, `overlaidText`, `isolate`, and `includeSourcePath`. The `parse` function returns a `result.v3` document. The `toMarkdown` function returns a string and throws if required fields are missing. TypeScript declarations are included, and JSON Schema files are available through subpaths such as `pdf-lite-parse/schemas/result`.
 
-CLI 默认输出 `result.json`、`warnings.json`、`metadata.json`、`source_index.json` 和 `assets/`；`--render` 或 `convert` 增加 `output.md`。库接口自动清理临时文件，需要图片时使用 `parseArtifacts`。
+CLI output includes `result.json`, `warnings.json`, `metadata.json`, `source_index.json`, and `assets/`. Parsing a PDF with `--render` or `convert` also generates `output.md`. The API cleans up its temporary files automatically; use `parseArtifacts` when you need image bytes as well as the document.
 
-## 能力边界
+## Limitations
 
-扫描页不做 OCR；文本层不完整、矢量图片无法导出或版面不确定时，会尽力保留内容并告警。复杂论文中的上标引用、短元数据行顺序及表头角色判断仍可能不准确。公式保留可提取原文，不生成 LaTeX。
+Scanned pages are not processed with OCR. When a text layer is incomplete, a vector figure cannot be exported, or a layout is ambiguous, the parser preserves as much content as possible and emits warnings. Superscript citations, the ordering of short metadata lines, and table header classification may be inaccurate in complex papers. Formulas retain their extractable source text; LaTeX is not generated.
 
-批处理应检查 `pages[].status` 和 `warnings`。源对象覆盖率不等于文本识别率，也不能证明全部结构语义正确。
+For batch processing, check `pages[].status` and `warnings`. Source object coverage measures how much source content is accounted for; it does not measure text recognition accuracy or guarantee correct document structure.
 
-## 开发与许可证
+## Development
 
-仓库只维护运行源码、构建配置和使用说明。GitHub Actions 在 Node.js 22.18 和 24 上执行类型检查、构建与打包。修改代码后运行 `npm run typecheck` 和 `npm pack`；发布包仅包含运行文件、类型声明、Schema 与许可证。
+This repository contains the runtime source, build configuration, and usage documentation. GitHub Actions runs type checking, builds, and packaging on Node.js 22.18 and 24. After making changes, run `npm run typecheck` and `npm pack`. The npm package includes runtime files, type declarations, schemas, the README, and license notices.
 
-采用 [Apache-2.0](LICENSE) 许可证；来源与第三方声明见 [NOTICE](NOTICE)。
+## License
+
+Licensed under [Apache-2.0](LICENSE). See [NOTICE](NOTICE) for attribution and third-party notices.
