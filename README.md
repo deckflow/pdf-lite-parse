@@ -4,9 +4,26 @@ A lightweight, offline PDF parser that converts PDFs with native text into struc
 
 Extract text, tables, columns, headings, lists, images, annotations, and document outlines while preserving references to the source content. The only required runtime dependency is `pdfjs-dist`. The optional `@napi-rs/canvas` dependency enables composite figure cropping; when unavailable, affected output is marked as degraded with a warning.
 
-## Build from source
+## Installation
 
 Requires **Node.js 22.18 or later** and npm.
+
+Install the library in your project:
+
+```bash
+npm install pdf-lite-parse
+```
+
+Or install the command-line tool globally:
+
+```bash
+npm install -g pdf-lite-parse
+pdf-lite-parse document.pdf --out ./out --render
+```
+
+## Build from source
+
+From a checkout of this repository:
 
 ```bash
 npm ci
@@ -56,10 +73,10 @@ Exit codes: `0` indicates completion, which may include degraded pages; `1` indi
 
 ## Node.js API
 
-Install the generated package into your project:
+Install the package into your project:
 
 ```bash
-npm install /path/to/pdf-lite-parse-0.1.0.tgz
+npm install pdf-lite-parse
 ```
 
 Then import the API using ES modules:
