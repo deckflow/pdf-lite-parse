@@ -1,6 +1,6 @@
 {
   "name": "pdf-lite-parse",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Offline PDF to structured result.v3 and Markdown. No models, network or API keys.",
   "repository": {
     "type": "git",
