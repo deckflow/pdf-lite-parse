@@ -59,17 +59,13 @@ try {
       const definitions = resolveRecursiveDefinitions();
       generated.set(
         fileName,
-        `${JSON.stringify(
-          {
-            $schema: 'https://json-schema.org/draft/2020-12/schema',
-            $id: `https://pdf-parse.local/schemas/parser/${fileName}`,
-            title: typeName,
-            ...schema,
-            ...(definitions === undefined ? {} : { $defs: definitions }),
-          },
-          null,
-          2,
-        )}\n`,
+        `${JSON.stringify({
+          $schema: 'https://json-schema.org/draft/2020-12/schema',
+          $id: `https://pdf-parse.local/schemas/parser/${fileName}`,
+          title: typeName,
+          ...schema,
+          ...(definitions === undefined ? {} : { $defs: definitions }),
+        })}\n`,
       );
     }
 

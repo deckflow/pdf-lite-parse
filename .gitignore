@@ -1,6 +1,7 @@
 node_modules/
 dist/
 schemas/
+*.map
 *.tgz
 out/
 .tmp/
