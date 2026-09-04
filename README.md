@@ -2,7 +2,7 @@
 
 A lightweight, offline PDF parser that converts PDFs with native text into structured JSON and Markdown. Available as a Node.js API and a command-line tool. No models, OCR services, or API keys are required.
 
-Extract text, tables, columns, headings, lists, images, annotations, and document outlines while preserving references to the source content. The only required runtime dependency is `pdfjs-dist`. The optional `@napi-rs/canvas` dependency enables composite figure cropping; when unavailable, affected output is marked as degraded with a warning.
+Extract text, tables, columns, headings, lists, images, annotations, and document outlines while preserving references to the source content. The only declared runtime dependency is `pdfjs-dist`. Composite figure cropping uses `@napi-rs/canvas`, which this package deliberately does not declare; it is detected at runtime instead. Note that `pdfjs-dist` itself declares `@napi-rs/canvas` as an optional dependency, so a regular npm installation usually includes it and cropping works out of the box. Installing with `--omit=optional` yields an installation with no native binaries; cropping is then disabled and affected output is marked as degraded with a warning.
 
 ## Installation
 
@@ -12,6 +12,13 @@ Install the library in your project:
 
 ```bash
 npm install pdf-lite-parse
+```
+
+A regular installation enables composite figure cropping through `@napi-rs/canvas`, pulled in via the optional dependencies of `pdfjs-dist`. Choose an install mode explicitly when you need a guarantee either way:
+
+```bash
+npm install pdf-lite-parse --omit=optional   # no native binaries; cropping degrades with a warning
+npm install @napi-rs/canvas                  # declare it yourself to guarantee cropping
 ```
 
 Or install the command-line tool globally:
@@ -44,7 +51,7 @@ npm install -g ./pdf-lite-parse-0.1.0.tgz
 pdf-lite-parse document.pdf --out ./out --render
 ```
 
-For basic parsing without composite figure cropping, install dependencies with `npm ci --omit=optional`.
+The development install includes `@napi-rs/canvas` as a devDependency so the cropping path can be exercised locally and in CI. Published installations receive it only when consumers install it explicitly.
 
 ## Command-line usage
 

@@ -46,10 +46,8 @@
   "dependencies": {
     "pdfjs-dist": "6.2.108"
   },
-  "optionalDependencies": {
-    "@napi-rs/canvas": "1.0.5"
-  },
   "devDependencies": {
+    "@napi-rs/canvas": "1.0.5",
     "@types/node": "^26.2.0",
     "typescript": "^7.0.2"
   }

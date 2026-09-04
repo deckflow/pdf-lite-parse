@@ -238,8 +238,8 @@ function rasterizerUnavailableWarning(): Warning {
     code: 'RASTERIZER_UNAVAILABLE',
     severity: 'info',
     scope: 'doc',
-    message: '页面栅格化依赖不可用，模型路径按未配置处理',
-    detail: { dependency: '@napi-rs/canvas' },
+    message: '页面栅格化依赖不可用，模型路径按未配置处理；运行 `npm install @napi-rs/canvas` 可启用',
+    detail: { dependency: '@napi-rs/canvas', hint: 'npm install @napi-rs/canvas' },
   };
 }
 
